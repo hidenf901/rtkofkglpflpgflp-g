@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VIP Крестики-нолики</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+        
+        .game-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 40px;
+            padding: 30px 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 0 2px #ffd700 inset;
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .vip-badge {
+            position: absolute;
+            top: 20px;
+            right: -35px;
+            background: #ffd700;
+            color: #1a1a2e;
+            padding: 8px 40px;
+            transform: rotate(45deg);
+            font-weight: bold;
+            font-size: 1.1em;
+            letter-spacing: 2px;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+            text-transform: uppercase;
+            z-index: 10;
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #ffd700, #ffa500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 20px;
+            border-radius: 30px;
+            margin-bottom: 25px;
+            border: 2px solid #ffd700;
+            box-shadow: 0 5px 0 #ffd700;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stat-value {
+            font-size: 2.2em;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 2px 2px 0 #ffa500;
+            line-height: 1.2;
+        }
+        
+        .skin-panel {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 30px;
+            margin-bottom: 25px;
+            border: 2px solid #ffd700;
+        }
+        
+        .skin-title {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #ffd700;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .skin-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        
+        .skin-btn {
+            aspect-ratio: 1;
+            border: none;
+            border-radius: 20px;
+            font-size: 2em;
+            cursor: pointer;
+            background: white;
+            box-shadow: 0 5px 0 #dee2e6;
+            transition: all 0.2s;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .skin-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 0 #ffd700;
+        }
+        
+        .skin-btn.active {
+            background: #ffd700;
+            color: white;
+            box-shadow: 0 5px 0 #ffa500;
+        }
+        
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            background: linear-gradient(135deg, #ffd700, #ffa500);
+            padding: 15px;
+            border-radius: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 0 #b8860b;
+        }
+        
+        .cell {
+            aspect-ratio: 1;
+            background: white;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 0 #dee2e6;
+            transform: translateY(0);
+        }
+        
+        .cell:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 0 #ffd700;
+        }
+        
+        .cell:active {
+            transform: translateY(2px);
+            box-shadow: 0 3px 0 #dee2e6;
+        }
+        
+        .cell.x-win {
+            background: linear-gradient(135deg, #ff6b6b, #ff4757);
+            color: white;
+            box-shadow: 0 5px 0 #c0392b;
+        }
+        
+        .cell.o-win {
+            background: linear-gradient(135deg, #4ecdc4, #45b7d1);
+            color: white;
+            box-shadow: 0 5px 0 #2980b9;
+        }
+        
+        @keyframes winPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .cell.win-animation {
+            animation: winPulse 0.5s ease 2;
+        }
+        
+        .message {
+            text-align: center;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 50px;
+            font-weight: bold;
+            color: #ffd700;
+            border: 2px solid #ffd700;
+            box-shadow: 0 5px 0 #ffa500;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 18px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #ffd700, #ffa500);
+            color: #1a1a2e;
+            box-shadow: 0 5px 0 #b8860b;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 0 #b8860b;
+        }
+        
+        .btn-primary:active {
+            transform: translateY(2px);
+            box-shadow: 0 3px 0 #b8860b;
+        }
+        
+        .btn-reset {
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            color: white;
+            box-shadow: 0 5px 0 #2c3e50;
+        }
+        
+        .btn-reset:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 0 #2c3e50;
+        }
+        
+        .btn-back {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            color: white;
+            box-shadow: 0 5px 0 #2c3e50;
+            margin-top: 15px;
+        }
+        
+        .btn-back:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 0 #2c3e50;
+        }
+        
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #ffd700;
+            font-size: 0.9em;
+        }
+        
+        @media (max-width: 400px) {
+            .cell { font-size: 3em; }
+            .skin-btn { font-size: 1.5em; }
+            .message { font-size: 1.3em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-card">
+        <div class="vip-badge">⭐ VIP ⭐</div>
+        
+        <h1>✦ VIP ✦</h1>
+        
+        <!-- Статистика -->
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-label">X победы</div>
+                <div class="stat-value" id="winsX">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">O победы</div>
+                <div class="stat-value" id="winsO">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Ничьи</div>
+                <div class="stat-value" id="draws">0</div>
+            </div>
+        </div>
+        
+        <!-- Скины -->
+        <div class="skin-panel">
+            <div class="skin-title">🎨 СКИНЫ</div>
+            <div class="skin-grid">
+                <button class="skin-btn active" onclick="changeSkin('classic')">X/O</button>
+                <button class="skin-btn" onclick="changeSkin('emoji')">❌/⭕</button>
+                <button class="skin-btn" onclick="changeSkin('stars')">⭐/🌟</button>
+                <button class="skin-btn" onclick="changeSkin('hearts')">❤️/💙</button>
+            </div>
+        </div>
+        
+        <!-- Игровое поле -->
+        <div class="board" id="board">
+            <div class="cell" onclick="makeMove(0)" id="cell0"></div>
+            <div class="cell" onclick="makeMove(1)" id="cell1"></div>
+            <div class="cell" onclick="makeMove(2)" id="cell2"></div>
+            <div class="cell" onclick="makeMove(3)" id="cell3"></div>
+            <div class="cell" onclick="makeMove(4)" id="cell4"></div>
+            <div class="cell" onclick="makeMove(5)" id="cell5"></div>
+            <div class="cell" onclick="makeMove(6)" id="cell6"></div>
+            <div class="cell" onclick="makeMove(7)" id="cell7"></div>
+            <div class="cell" onclick="makeMove(8)" id="cell8"></div>
+        </div>
+        
+        <!-- Сообщение -->
+        <div class="message" id="message">Ход X</div>
+        
+        <!-- Кнопки -->
+        <div class="buttons">
+            <button class="btn btn-primary" onclick="resetGame()">🔄 Новая</button>
+            <button class="btn btn-reset" onclick="resetStats()">📊 Сброс</button>
+        </div>
+        
+        <!-- Кнопка назад в меню -->
+        <button class="btn btn-back" onclick="window.location.href='index.html'">⬅️ В меню</button>
+        
+        <div class="footer">
+            ✨ Премиум версия ✨
+        </div>
+    </div>
+
+    <script>
+        // Игровые переменные
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'X';
+        let gameActive = true;
+        
+        // Скины
+        let skins = {
+            'classic': { X: 'X', O: 'O' },
+            'emoji': { X: '❌', O: '⭕' },
+            'stars': { X: '⭐', O: '🌟' },
+            'hearts': { X: '❤️', O: '💙' }
+        };
+        let currentSkin = 'classic';
+        
+        // Статистика
+        let stats = {
+            winsX: 0,
+            winsO: 0,
+            draws: 0
+        };
+        
+        // Загружаем статистику
+        if (localStorage.getItem('vipTicTacToe')) {
+            stats = JSON.parse(localStorage.getItem('vipTicTacToe'));
+            updateStats();
+        }
+        
+        // Смена скина
+        function changeSkin(skin) {
+            currentSkin = skin;
+            
+            document.querySelectorAll('.skin-btn').forEach((btn, index) => {
+                btn.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            updateBoardDisplay();
+            playSound();
+        }
+        
+        function updateBoardDisplay() {
+            for (let i = 0; i < 9; i++) {
+                const cell = document.getElementById(`cell${i}`);
+                if (board[i] === 'X') {
+                    cell.textContent = skins[currentSkin].X;
+                } else if (board[i] === 'O') {
+                    cell.textContent = skins[currentSkin].O;
+                } else {
+                    cell.textContent = '';
+                }
+            }
+        }
+        
+        function makeMove(index) {
+            if (!gameActive) return;
+            
+            const cell = document.getElementById(`cell${index}`);
+            
+            if (board[index] === '') {
+                playSound();
+                
+                board[index] = currentPlayer;
+                cell.textContent = skins[currentSkin][currentPlayer];
+                
+                cell.style.transform = 'scale(0.8)';
+                setTimeout(() => {
+                    cell.style.transform = '';
+                }, 200);
+                
+                if (checkWin()) {
+                    gameActive = false;
+                    document.getElementById('message').textContent = `Победил ${currentPlayer}! 🎉`;
+                    
+                    highlightWinner();
+                    
+                    if (currentPlayer === 'X') {
+                        stats.winsX++;
+                    } else {
+                        stats.winsO++;
+                    }
+                    saveStats();
+                } else if (isBoardFull()) {
+                    gameActive = false;
+                    document.getElementById('message').textContent = 'Ничья! 🤝';
+                    stats.draws++;
+                    saveStats();
+                } else {
+                    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                    document.getElementById('message').textContent = `Ход ${currentPlayer}`;
+                }
+            }
+        }
+        
+        function checkWin() {
+            const lines = [
+                [0,1,2], [3,4,5], [6,7,8],
+                [0,3,6], [1,4,7], [2,5,8],
+                [0,4,8], [2,4,6]
+            ];
+            
+            for (let line of lines) {
+                if (board[line[0]] && 
+                    board[line[0]] === board[line[1]] && 
+                    board[line[0]] === board[line[2]]) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        function highlightWinner() {
+            const lines = [
+                [0,1,2], [3,4,5], [6,7,8],
+                [0,3,6], [1,4,7], [2,5,8],
+                [0,4,8], [2,4,6]
+            ];
+            
+            for (let line of lines) {
+                if (board[line[0]] && 
+                    board[line[0]] === board[line[1]] && 
+                    board[line[0]] === board[line[2]]) {
+                    
+                    line.forEach(index => {
+                        const cell = document.getElementById(`cell${index}`);
+                        cell.classList.add(currentPlayer === 'X' ? 'x-win' : 'o-win');
+                        cell.classList.add('win-animation');
+                    });
+                    break;
+                }
+            }
+        }
+        
+        function isBoardFull() {
+            return board.every(cell => cell !== '');
+        }
+        
+        function resetGame() {
+            board = ['', '', '', '', '', '', '', '', ''];
+            currentPlayer = 'X';
+            gameActive = true;
+            document.getElementById('message').textContent = 'Ход X';
+            
+            for (let i = 0; i < 9; i++) {
+                const cell = document.getElementById(`cell${i}`);
+                cell.textContent = '';
+                cell.classList.remove('x-win', 'o-win', 'win-animation');
+            }
+            
+            playSound();
+        }
+        
+        function resetStats() {
+            if (confirm('Сбросить статистику?')) {
+                stats = { winsX: 0, winsO: 0, draws: 0 };
+                saveStats();
+                playSound();
+            }
+        }
+        
+        function saveStats() {
+            localStorage.setItem('vipTicTacToe', JSON.stringify(stats));
+            updateStats();
+        }
+        
+        function updateStats() {
+            document.getElementById('winsX').textContent = stats.winsX;
+            document.getElementById('winsO').textContent = stats.winsO;
+            document.getElementById('draws').textContent = stats.draws;
+        }
+        
+        function playSound() {
+            if (navigator.vibrate) {
+                navigator.vibrate(50);
+            }
+            
+            const audio = new Audio();
+            audio.src = 'data:audio/wav;base64,UklGRlwAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YVAAAAA8AP8A/gD9AP0A/QD9AP0A/QD9AP0A/QD9AP0A/QD9AP0A/QD9AP0A/QD9AP0A/QD9AP0A/QD9AA==';
+            audio.volume = 0.3;
+            audio.play().catch(e => {});
+        }
+    </script>
+</body>
+</html>
