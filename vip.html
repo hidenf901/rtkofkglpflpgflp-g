@@ -54,7 +54,6 @@
             background: linear-gradient(135deg, #ffd700, #ffa500);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
         
         .stats {
@@ -210,6 +209,8 @@
         .buttons {
             display: flex;
             gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
         }
         
         .btn {
@@ -223,6 +224,7 @@
             transition: all 0.3s;
             text-transform: uppercase;
             letter-spacing: 1px;
+            min-width: 150px;
         }
         
         .btn-primary {
@@ -236,11 +238,6 @@
             box-shadow: 0 8px 0 #b8860b;
         }
         
-        .btn-primary:active {
-            transform: translateY(2px);
-            box-shadow: 0 3px 0 #b8860b;
-        }
-        
         .btn-reset {
             background: linear-gradient(135deg, #4a90e2, #357abd);
             color: white;
@@ -252,11 +249,25 @@
             box-shadow: 0 8px 0 #2c3e50;
         }
         
+        .btn-network {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+            box-shadow: 0 5px 0 #6c3483;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .btn-network:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 0 #6c3483;
+        }
+        
         .btn-back {
             background: linear-gradient(135deg, #95a5a6, #7f8c8d);
             color: white;
             box-shadow: 0 5px 0 #2c3e50;
-            margin-top: 15px;
+            width: 100%;
+            margin-top: 10px;
         }
         
         .btn-back:hover {
@@ -269,6 +280,12 @@
             text-align: center;
             color: #ffd700;
             font-size: 0.9em;
+        }
+        
+        .network-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px dashed #ffd700;
         }
         
         @media (max-width: 400px) {
@@ -304,10 +321,10 @@
         <div class="skin-panel">
             <div class="skin-title">🎨 СКИНЫ</div>
             <div class="skin-grid">
-                <button class="skin-btn active" onclick="changeSkin('classic')">X/O</button>
-                <button class="skin-btn" onclick="changeSkin('emoji')">❌/⭕</button>
-                <button class="skin-btn" onclick="changeSkin('stars')">⭐/🌟</button>
-                <button class="skin-btn" onclick="changeSkin('hearts')">❤️/💙</button>
+                <button class="skin-btn active" onclick="changeSkin('classic', this)">X/O</button>
+                <button class="skin-btn" onclick="changeSkin('emoji', this)">❌/⭕</button>
+                <button class="skin-btn" onclick="changeSkin('stars', this)">⭐/🌟</button>
+                <button class="skin-btn" onclick="changeSkin('hearts', this)">❤️/💙</button>
             </div>
         </div>
         
@@ -331,6 +348,11 @@
         <div class="buttons">
             <button class="btn btn-primary" onclick="resetGame()">🔄 Новая</button>
             <button class="btn btn-reset" onclick="resetStats()">📊 Сброс</button>
+        </div>
+        
+        <!-- Секция сетевой игры -->
+        <div class="network-section">
+            <button class="btn btn-network" onclick="playLocalNetwork()">🌐 ИГРАТЬ ПО ЛОКАЛЬНОЙ СЕТИ</button>
         </div>
         
         <!-- Кнопка назад в меню -->
@@ -369,14 +391,29 @@
             updateStats();
         }
         
+        // Функция для игры по локальной сети
+        function playLocalNetwork() {
+            const playerName = prompt('Введите ваш ник:', 'VIP Игрок') || 'VIP Игрок';
+            
+            // Сохраняем данные игрока
+            localStorage.setItem('playerName', playerName);
+            localStorage.setItem('playerVersion', 'vip');
+            
+            // Переходим в лобби (файл 4)
+            window.location.href = 'lobby.html';
+        }
+        
         // Смена скина
-        function changeSkin(skin) {
+        function changeSkin(skin, btn) {
             currentSkin = skin;
             
-            document.querySelectorAll('.skin-btn').forEach((btn, index) => {
-                btn.classList.remove('active');
+            // Убираем активный класс у всех кнопок
+            document.querySelectorAll('.skin-btn').forEach(b => {
+                b.classList.remove('active');
             });
-            event.currentTarget.classList.add('active');
+            
+            // Добавляем активный класс нажатой кнопке
+            btn.classList.add('active');
             
             updateBoardDisplay();
             playSound();
@@ -389,8 +426,6 @@
                     cell.textContent = skins[currentSkin].X;
                 } else if (board[i] === 'O') {
                     cell.textContent = skins[currentSkin].O;
-                } else {
-                    cell.textContent = '';
                 }
             }
         }
@@ -406,6 +441,7 @@
                 board[index] = currentPlayer;
                 cell.textContent = skins[currentSkin][currentPlayer];
                 
+                // Анимация
                 cell.style.transform = 'scale(0.8)';
                 setTimeout(() => {
                     cell.style.transform = '';
@@ -516,11 +552,6 @@
             if (navigator.vibrate) {
                 navigator.vibrate(50);
             }
-            
-            const audio = new Audio();
-            audio.src = 'data:audio/wav;base64,UklGRlwAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YVAAAAA8AP8A/gD9AP0A/QD9AP0A/QD9AP0A/QD9AP0A/QD9AP0A/QD9AP0A/QD9AP0A/QD9AP0A/QD9AA==';
-            audio.volume = 0.3;
-            audio.play().catch(e => {});
         }
     </script>
 </body>
