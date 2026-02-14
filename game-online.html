@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Игра онлайн</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 15px;
+        }
+        
+        .game {
+            background: white;
+            padding: 30px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        .players {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+        
+        .player {
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 10px;
+        }
+        
+        .player.x {
+            background: #ff6b6b;
+            color: white;
+        }
+        
+        .player.o {
+            background: #4ecdc4;
+            color: white;
+        }
+        
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            background: #667eea;
+            padding: 10px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .cell {
+            aspect-ratio: 1;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4em;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #4a5fd0;
+        }
+        
+        .cell:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .message {
+            font-size: 1.5em;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            font-weight: bold;
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        .vip-feature {
+            margin-top: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #fff9e6, #fff3cd);
+            border-radius: 15px;
+            border: 2px solid #FFD700;
+        }
+    </style>
+</head>
+<body>
+    <div class="game">
+        <h2>⚔️ Игра онлайн ⚔️</h2>
+        
+        <div class="players">
+            <div class="player x" id="playerX">X: Загрузка...</div>
+            <div class="player o" id="playerO">O: Загрузка...</div>
+        </div>
+        
+        <div class="board" id="board">
+            <div class="cell" onclick="makeMove(0)" id="cell0" disabled></div>
+            <div class="cell" onclick="makeMove(1)" id="cell1" disabled></div>
+            <div class="cell" onclick="makeMove(2)" id="cell2" disabled></div>
+            <div class="cell" onclick="makeMove(3)" id="cell3" disabled></div>
+            <div class="cell" onclick="makeMove(4)" id="cell4" disabled></div>
+            <div class="cell" onclick="makeMove(5)" id="cell5" disabled></div>
+            <div class="cell" onclick="makeMove(6)" id="cell6" disabled></div>
+            <div class="cell" onclick="makeMove(7)" id="cell7" disabled></div>
+            <div class="cell" onclick="makeMove(8)" id="cell8" disabled></div>
+        </div>
+        
+        <div class="message" id="message">Ожидание соперника...</div>
+        
+        <button onclick="window.location.href='lobby.html'">⬅️ В лобби</button>
+        
+        <!-- VIP функции -->
+        <div id="vipFeatures" class="vip-feature" style="display: none;">
+            ⭐ VIP режим: скины и статистика будут доступны после оплаты
+        </div>
+    </div>
+
+    <script>
+        const playerName = localStorage.getItem('playerName') || 'Игрок';
+        const playerVersion = localStorage.getItem('playerVersion') || 'free';
+        const opponent = localStorage.getItem('opponent') || 'Соперник';
+        
+        // Показываем VIP функции
+        if (playerVersion === 'vip') {
+            document.getElementById('vipFeatures').style.display = 'block';
+        }
+        
+        // Устанавливаем игроков
+        document.getElementById('playerX').textContent = `X: ${playerName}`;
+        document.getElementById('playerO').textContent = `O: ${opponent}`;
+        
+        // Игровые переменные
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'X';
+        let gameActive = true;
+        let myTurn = true; // Текущий игрок ходит первым
+        
+        function enableBoard() {
+            for (let i = 0; i < 9; i++) {
+                document.getElementById(`cell${i}`).disabled = false;
+            }
+        }
+        
+        function makeMove(index) {
+            if (!gameActive || !myTurn) return;
+            
+            const cell = document.getElementById(`cell${index}`);
+            
+            if (board[index] === '') {
+                board[index] = currentPlayer;
+                cell.textContent = currentPlayer;
+                cell.disabled = true;
+                
+                if (checkWin()) {
+                    gameActive = false;
+                    document.getElementById('message').textContent = `${currentPlayer} победил! 🎉`;
+                    disableBoard();
+                } else if (board.every(cell => cell !== '')) {
+                    gameActive = false;
+                    document.getElementById('message').textContent = 'Ничья! 🤝';
+                } else {
+                    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                    myTurn = false;
+                    document.getElementById('message').textContent = `Ход соперника (${currentPlayer})`;
+                    
+                    // Имитация хода соперника через 2 секунды
+                    setTimeout(() => {
+                        if (gameActive) {
+                            makeAIMove();
+                        }
+                    }, 2000);
+                }
+            }
+        }
+        
+        function makeAIMove() {
+            // Простой AI для демонстрации
+            const emptyCells = board.reduce((acc, cell, index) => {
+                if (cell === '') acc.push(index);
+                return acc;
+            }, []);
+            
+            if (emptyCells.length > 0 && gameActive) {
+                const randomIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+                const cell = document.getElementById(`cell${randomIndex}`);
+                
+                board[randomIndex] = currentPlayer;
+                cell.textContent = currentPlayer;
+                cell.disabled = true;
+                
+                if (checkWin()) {
+                    gameActive = false;
+                    document.getElementById('message').textContent = `${currentPlayer} победил! 🎉`;
+                    disableBoard();
+                } else if (board.every(cell => cell !== '')) {
+                    gameActive = false;
+                    document.getElementById('message').textContent = 'Ничья! 🤝';
+                } else {
+                    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                    myTurn = true;
+                    document.getElementById('message').textContent = `Твой ход (${currentPlayer})`;
+                }
+            }
+        }
+        
+        function checkWin() {
+            const lines = [
+                [0,1,2], [3,4,5], [6,7,8],
+                [0,3,6], [1,4,7], [2,5,8],
+                [0,4,8], [2,4,6]
+            ];
+            
+            for (let line of lines) {
+                if (board[line[0]] && 
+                    board[line[0]] === board[line[1]] && 
+                    board[line[0]] === board[line[2]]) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        function disableBoard() {
+            for (let i = 0; i < 9; i++) {
+                document.getElementById(`cell${i}`).disabled = true;
+            }
+        }
+        
+        // Начинаем игру
+        setTimeout(() => {
+            document.getElementById('message').textContent = `Твой ход (X)`;
+            enableBoard();
+        }, 1000);
+    </script>
+</body>
+</html>
