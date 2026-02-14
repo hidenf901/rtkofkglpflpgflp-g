@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Крестики-нолики</title>
+    <title>Крестики-нолики Free</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -27,6 +27,16 @@
         h2 {
             color: #667eea;
             margin-bottom: 20px;
+        }
+        
+        .free-badge {
+            background: #4CAF50;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 50px;
+            display: inline-block;
+            margin-bottom: 15px;
+            font-weight: bold;
         }
         
         .board {
@@ -74,11 +84,18 @@
             cursor: pointer;
             margin: 5px;
             box-shadow: 0 5px 0 #4a5fd0;
+            width: 100%;
         }
         
         button:hover {
             transform: translateY(-2px);
             box-shadow: 0 7px 0 #4a5fd0;
+        }
+        
+        .btn-lobby {
+            background: #4CAF50;
+            box-shadow: 0 5px 0 #2e7d32;
+            margin-top: 15px;
         }
         
         .ad {
@@ -87,11 +104,19 @@
             background: #f0f0f0;
             border-radius: 15px;
             color: #666;
+            border: 2px dashed #4CAF50;
+        }
+        
+        .back-btn {
+            background: #95a5a6;
+            box-shadow: 0 5px 0 #7f8c8d;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <div class="game">
+        <div class="free-badge">FREE</div>
         <h2>Крестики-нолики</h2>
         
         <div class="board" id="board">
@@ -108,18 +133,34 @@
         
         <div class="message" id="message">Ход X</div>
         
-        <button onclick="resetGame()">Новая игра</button>
-        <button onclick="window.location.href='index.html'">В меню</button>
+        <button onclick="resetGame()">🔄 Новая игра</button>
+        
+        <!-- Кнопка перехода в лобби (файл 4) -->
+        <button class="btn-lobby" onclick="goToLobby()">👥 ИГРАТЬ С ДРУЗЬЯМИ (ЛОББИ)</button>
         
         <div class="ad">
-            📢 Реклама • Бесплатная версия
+            📢 Реклама • Бесплатная версия<br>
+            <small>Купи VIP чтобы убрать рекламу и получить скины!</small>
         </div>
+        
+        <button class="back-btn" onclick="window.location.href='index.html'">⬅️ В меню</button>
     </div>
 
     <script>
         let board = ['', '', '', '', '', '', '', '', ''];
         let currentPlayer = 'X';
         let gameActive = true;
+        
+        function goToLobby() {
+            const playerName = prompt('Введите ваш ник:', 'Игрок') || 'Игрок';
+            
+            // Сохраняем данные игрока
+            localStorage.setItem('playerName', playerName);
+            localStorage.setItem('playerVersion', 'free');
+            
+            // Переходим в лобби (файл 4)
+            window.location.href = 'lobby.html';
+        }
         
         function makeMove(index) {
             if (!gameActive) return;
