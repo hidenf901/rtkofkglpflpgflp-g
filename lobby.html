@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Лобби - Игроки онлайн</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 30px;
+            padding: 20px 30px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .avatar {
+            width: 50px;
+            height: 50px;
+            background: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .vip-avatar {
+            background: #FFD700;
+            color: #333;
+            box-shadow: 0 0 20px #FFD700;
+        }
+        
+        .name {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .badge {
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .badge-free {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .badge-vip {
+            background: #FFD700;
+            color: #333;
+        }
+        
+        .btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .btn-exit {
+            background: #f44336;
+            color: white;
+        }
+        
+        .main {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+        }
+        
+        .players-list {
+            background: white;
+            border-radius: 30px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .players-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .players-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .online-count {
+            background: #4CAF50;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 50px;
+        }
+        
+        .player-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .player-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .player-card.vip {
+            background: linear-gradient(135deg, #fff9e6, #fff3cd);
+            border-left: 5px solid #FFD700;
+        }
+        
+        .player-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .player-avatar {
+            width: 40px;
+            height: 40px;
+            background: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .player-avatar.vip {
+            background: #FFD700;
+            color: #333;
+        }
+        
+        .player-name {
+            font-weight: bold;
+        }
+        
+        .player-status {
+            font-size: 12px;
+            color: #4CAF50;
+        }
+        
+        .player-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .vip-star {
+            color: #FFD700;
+            font-size: 20px;
+        }
+        
+        .challenge-btn {
+            padding: 8px 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .challenge-btn:hover {
+            background: #5a67d8;
+        }
+        
+        .chat {
+            background: white;
+            border-radius: 30px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .chat-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+        
+        .message {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 10px;
+        }
+        
+        .message.system {
+            background: #e3f2fd;
+            color: #1976d2;
+            text-align: center;
+        }
+        
+        .message .sender {
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+        }
+        
+        .chat-input button {
+            padding: 12px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+        }
+        
+        .ad {
+            margin-top: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            text-align: center;
+            border: 2px dashed #4CAF50;
+        }
+        
+        @media (max-width: 768px) {
+            .main {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="player-info">
+                <div class="avatar" id="playerAvatar">👤</div>
+                <div>
+                    <div class="name" id="playerName">Игрок</div>
+                    <div class="badge" id="playerBadge">FREE</div>
+                </div>
+            </div>
+            <button class="btn btn-exit" onclick="exitToMenu()">Выйти</button>
+        </div>
+        
+        <div class="main">
+            <div class="players-list">
+                <div class="players-header">
+                    <span class="players-title">Игроки онлайн</span>
+                    <span class="online-count" id="onlineCount">3</span>
+                </div>
+                
+                <div id="playersContainer">
+                    <!-- Список игроков будет добавляться через JS -->
+                </div>
+                
+                <!-- Реклама для FREE игроков -->
+                <div id="freeAd" class="ad" style="display: none;">
+                    📢 Реклама • Купи VIP чтобы убрать рекламу
+                </div>
+            </div>
+            
+            <div class="chat">
+                <div class="chat-title">💬 Чат</div>
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message system">Добро пожаловать в лобби!</div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="chatInput" placeholder="Введите сообщение..." onkeypress="if(event.key==='Enter') sendMessage()">
+                    <button onclick="sendMessage()">➡️</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Загружаем данные игрока
+        const playerName = localStorage.getItem('playerName') || 'Игрок';
+        const playerVersion = localStorage.getItem('playerVersion') || 'free';
+        
+        // Отображаем информацию игрока
+        document.getElementById('playerName').textContent = playerName;
+        const playerBadge = document.getElementById('playerBadge');
+        const playerAvatar = document.getElementById('playerAvatar');
+        
+        if (playerVersion === 'vip') {
+            playerBadge.textContent = 'VIP';
+            playerBadge.className = 'badge badge-vip';
+            playerAvatar.className = 'avatar vip-avatar';
+            playerAvatar.textContent = '⭐';
+        } else {
+            playerBadge.textContent = 'FREE';
+            playerBadge.className = 'badge badge-free';
+            playerAvatar.textContent = playerName[0].toUpperCase();
+            document.getElementById('freeAd').style.display = 'block';
+        }
+        
+        // Список игроков онлайн
+        let players = [
+            { name: 'Игрок 1', version: 'free', status: 'онлайн' },
+            { name: 'Игрок 2', version: 'free', status: 'онлайн' },
+            { name: 'VIP_Player', version: 'vip', status: 'онлайн' }
+        ];
+        
+        // Добавляем текущего игрока
+        players.push({ 
+            name: playerName, 
+            version: playerVersion, 
+            status: 'онлайн',
+            isMe: true 
+        });
+        
+        function updatePlayersList() {
+            const container = document.getElementById('playersContainer');
+            container.innerHTML = '';
+            
+            players.forEach(p => {
+                const card = document.createElement('div');
+                card.className = `player-card ${p.version === 'vip' ? 'vip' : ''}`;
+                
+                card.innerHTML = `
+                    <div class="player-left">
+                        <div class="player-avatar ${p.version === 'vip' ? 'vip' : ''}">
+                            ${p.version === 'vip' ? '⭐' : p.name[0].toUpperCase()}
+                        </div>
+                        <div>
+                            <div class="player-name">${p.name} ${p.isMe ? '(ты)' : ''}</div>
+                            <div class="player-status">${p.status}</div>
+                        </div>
+                    </div>
+                    <div class="player-right">
+                        ${p.version === 'vip' ? '<span class="vip-star">⭐</span>' : ''}
+                        ${!p.isMe ? `<button class="challenge-btn" onclick="challengePlayer('${p.name}')">Играть</button>` : ''}
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+            
+            document.getElementById('onlineCount').textContent = players.length;
+        }
+        
+        function challengePlayer(name) {
+            if (playerVersion === 'free') {
+                // Для FREE показываем рекламу
+                alert('⚠️ В бесплатной версии можно играть только с ботами!\nКупи VIP чтобы играть с игроками!');
+                addSystemMessage('Купи VIP чтобы играть с другими игроками!');
+            } else {
+                // Для VIP предлагаем игру
+                if (confirm(`Пригласить ${name} в игру?`)) {
+                    addSystemMessage(`Приглашение отправлено ${name}`);
+                    
+                    // Переходим в игру
+                    localStorage.setItem('opponent', name);
+                    window.location.href = 'game-online.html';
+                }
+            }
+        }
+        
+        function addSystemMessage(text) {
+            const messages = document.getElementById('chatMessages');
+            const msg = document.createElement('div');
+            msg.className = 'message system';
+            msg.textContent = text;
+            messages.appendChild(msg);
+            messages.scrollTop = messages.scrollHeight;
+        }
+        
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            
+            if (text) {
+                const messages = document.getElementById('chatMessages');
+                const msg = document.createElement('div');
+                msg.className = 'message';
+                msg.innerHTML = `<span class="sender">${playerName}:</span> ${text}`;
+                messages.appendChild(msg);
+                messages.scrollTop = messages.scrollHeight;
+                
+                input.value = '';
+            }
+        }
+        
+        function exitToMenu() {
+            window.location.href = 'index.html';
+        }
+        
+        // Обновляем список игроков
+        updatePlayersList();
+        
+        // Добавляем приветственное сообщение
+        addSystemMessage(`${playerName} присоединился к лобби (${playerVersion === 'vip' ? '⭐ VIP' : 'FREE'})`);
+    </script>
+</body>
+</html>
