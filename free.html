@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Крестики-нолики</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 15px;
+        }
+        
+        .game {
+            background: white;
+            padding: 30px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 400px;
+            width: 100%;
+        }
+        
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            background: #667eea;
+            padding: 10px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .cell {
+            aspect-ratio: 1;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #4a5fd0;
+        }
+        
+        .cell:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 0 #4a5fd0;
+        }
+        
+        .message {
+            font-size: 1.5em;
+            margin: 20px 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin: 5px;
+            box-shadow: 0 5px 0 #4a5fd0;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 0 #4a5fd0;
+        }
+        
+        .ad {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="game">
+        <h2>Крестики-нолики</h2>
+        
+        <div class="board" id="board">
+            <div class="cell" onclick="makeMove(0)" id="cell0"></div>
+            <div class="cell" onclick="makeMove(1)" id="cell1"></div>
+            <div class="cell" onclick="makeMove(2)" id="cell2"></div>
+            <div class="cell" onclick="makeMove(3)" id="cell3"></div>
+            <div class="cell" onclick="makeMove(4)" id="cell4"></div>
+            <div class="cell" onclick="makeMove(5)" id="cell5"></div>
+            <div class="cell" onclick="makeMove(6)" id="cell6"></div>
+            <div class="cell" onclick="makeMove(7)" id="cell7"></div>
+            <div class="cell" onclick="makeMove(8)" id="cell8"></div>
+        </div>
+        
+        <div class="message" id="message">Ход X</div>
+        
+        <button onclick="resetGame()">Новая игра</button>
+        <button onclick="window.location.href='index.html'">В меню</button>
+        
+        <div class="ad">
+            📢 Реклама • Бесплатная версия
+        </div>
+    </div>
+
+    <script>
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'X';
+        let gameActive = true;
+        
+        function makeMove(index) {
+            if (!gameActive) return;
+            
+            const cell = document.getElementById(`cell${index}`);
+            
+            if (board[index] === '') {
+                board[index] = currentPlayer;
+                cell.textContent = currentPlayer;
+                
+                if (checkWin()) {
+                    gameActive = false;
+                    document.getElementById('message').textContent = `Победил ${currentPlayer}!`;
+                } else if (board.every(cell => cell !== '')) {
+                    gameActive = false;
+                    document.getElementById('message').textContent = 'Ничья!';
+                } else {
+                    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                    document.getElementById('message').textContent = `Ход ${currentPlayer}`;
+                }
+            }
+        }
+        
+        function checkWin() {
+            const lines = [
+                [0,1,2], [3,4,5], [6,7,8],
+                [0,3,6], [1,4,7], [2,5,8],
+                [0,4,8], [2,4,6]
+            ];
+            
+            for (let line of lines) {
+                if (board[line[0]] && 
+                    board[line[0]] === board[line[1]] && 
+                    board[line[0]] === board[line[2]]) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        function resetGame() {
+            board = ['', '', '', '', '', '', '', '', ''];
+            currentPlayer = 'X';
+            gameActive = true;
+            document.getElementById('message').textContent = 'Ход X';
+            
+            for (let i = 0; i < 9; i++) {
+                document.getElementById(`cell${i}`).textContent = '';
+            }
+        }
+    </script>
+</body>
+</html>
