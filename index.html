@@ -112,6 +112,53 @@
             color: white;
         }
         
+        .badge-lk {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f);
+            color: white;
+        }
+        
+        .badge-fun {
+            background: linear-gradient(135deg, #ff6b6b, #ff4757);
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        
+        .badge-secret {
+            background: linear-gradient(135deg, #000000, #434343);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .badge-secret::before {
+            content: "🔮";
+            position: absolute;
+            left: -20px;
+            top: -20px;
+            opacity: 0.3;
+            font-size: 40px;
+            transform: rotate(45deg);
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes secretGlow {
+            0% { box-shadow: 0 0 5px #ff00ff; }
+            50% { box-shadow: 0 0 20px #00ffff; }
+            100% { box-shadow: 0 0 5px #ff00ff; }
+        }
+        
+        .secret-card {
+            animation: secretGlow 3s infinite;
+            border: 2px solid transparent;
+            background: linear-gradient(white, white) padding-box,
+                        linear-gradient(45deg, #ff00ff, #00ffff) border-box;
+        }
+        
         .btn-play {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
@@ -141,6 +188,24 @@
         
         .btn-play.online {
             background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+        
+        .btn-play.lk {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f);
+        }
+        
+        .btn-play.fun {
+            background: linear-gradient(135deg, #ff6b6b, #ff4757);
+            animation: pulse 2s infinite;
+        }
+        
+        .btn-play.secret {
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
+            color: black;
+            font-weight: bold;
+            animation: pulse 1.5s infinite;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
         
         .player-info {
@@ -182,11 +247,6 @@
             color: #667eea;
         }
         
-        .back-button {
-            text-align: center;
-            margin-top: 20px;
-        }
-        
         .btn-back {
             background: #95a5a6;
             color: white;
@@ -201,6 +261,26 @@
         .btn-back:hover {
             background: #7f8c8d;
             transform: scale(1.05);
+        }
+        
+        .external-links {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px dashed #667eea;
+        }
+        
+        .external-title {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+        
+        .external-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
         }
         
         @media (max-width: 768px) {
@@ -226,7 +306,7 @@
 <body>
     <div class="menu-container">
         <h1>🎮 GAME CENTER 🎮</h1>
-        <div class="subtitle">Выбери игру и режим</div>
+        <div class="subtitle">Выбери игру или развлечение</div>
         
         <!-- Информация об игроке -->
         <div class="player-info" id="playerInfo">
@@ -284,6 +364,39 @@
             </div>
         </div>
         
+        <!-- Внешние ссылки -->
+        <div class="external-links">
+            <div class="external-title">🔗 ДОПОЛНИТЕЛЬНО 🔗</div>
+            <div class="external-grid">
+                <!-- Карточка 5: Наша работа (lk-90) -->
+                <div class="game-card">
+                    <span class="game-badge badge-lk">НАША РАБОТА</span>
+                    <div class="game-icon">💼</div>
+                    <div class="game-title">Личный кабинет lk-90</div>
+                    <div class="game-desc">Наш совместный проект - личный кабинет с системой звезд и заданиями</div>
+                    <button class="btn-play lk" onclick="openExternal('lk')">ОТКРЫТЬ lk-90</button>
+                </div>
+                
+                <!-- Карточка 6: Если скучно (первое видео) -->
+                <div class="game-card">
+                    <span class="game-badge badge-fun">НЕ СКУЧАЙ!</span>
+                    <div class="game-icon">🎥</div>
+                    <div class="game-title">ВЛАД А4 - ПРЯТКИ</div>
+                    <div class="game-desc">Крутое видео, чтобы поднять настроение!</div>
+                    <button class="btn-play fun" onclick="openExternal('fun')">СМОТРЕТЬ ВИДЕО</button>
+                </div>
+                
+                <!-- Карточка 7: СЕКРЕТНОЕ ВИДЕО (новое) -->
+                <div class="game-card secret-card">
+                    <span class="game-badge badge-secret">🔮 СЕКРЕТНО 🔮</span>
+                    <div class="game-icon">🤫</div>
+                    <div class="game-title">НУБ И ПРО ПРОТИВ ПАУКА</div>
+                    <div class="game-desc">Секретное видео! НУБ И ПРО ПРОТИВ БОЛЬШОЙ ПАУК МУТАНТ В МАЙНКРАФТ!</div>
+                    <button class="btn-play secret" onclick="openExternal('secret')">🔓 ОТКРЫТЬ СЕКРЕТ</button>
+                </div>
+            </div>
+        </div>
+        
         <!-- Кнопки быстрого переключения -->
         <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 20px;">
             <button class="btn-back" onclick="goToGame('free.html')">➡️ FREE игра</button>
@@ -326,6 +439,21 @@
                     break;
                 case 'online':
                     window.location.href = 'game-online.html';
+                    break;
+            }
+        }
+        
+        // Функция открытия внешних ссылок
+        function openExternal(type) {
+            switch(type) {
+                case 'lk':
+                    window.open('https://hidenf901.github.io/d9012/', '_blank');
+                    break;
+                case 'fun':
+                    window.open('https://rutube.ru/video/e21298e6d1e5b80c1067209b9ffbf69c/', '_blank');
+                    break;
+                case 'secret':
+                    window.open('https://rutube.ru/video/940404e193b2a6fa8b5b59091749a04f/', '_blank');
                     break;
             }
         }
