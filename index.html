@@ -120,7 +120,6 @@
         .badge-fun {
             background: linear-gradient(135deg, #ff6b6b, #ff4757);
             color: white;
-            animation: pulse 2s infinite;
         }
         
         .badge-secret {
@@ -138,6 +137,11 @@
             opacity: 0.3;
             font-size: 40px;
             transform: rotate(45deg);
+        }
+        
+        .badge-vlad {
+            background: linear-gradient(135deg, #ff6b6b, #ff4757);
+            color: white;
         }
         
         @keyframes pulse {
@@ -194,9 +198,8 @@
             background: linear-gradient(135deg, #1a2a6c, #b21f1f);
         }
         
-        .btn-play.fun {
+        .btn-play.vlad {
             background: linear-gradient(135deg, #ff6b6b, #ff4757);
-            animation: pulse 2s infinite;
         }
         
         .btn-play.secret {
@@ -377,22 +380,22 @@
                     <button class="btn-play lk" onclick="openExternal('lk')">ОТКРЫТЬ lk-90</button>
                 </div>
                 
-                <!-- Карточка 6: Если скучно (первое видео) -->
-                <div class="game-card">
-                    <span class="game-badge badge-fun">НЕ СКУЧАЙ!</span>
-                    <div class="game-icon">🎥</div>
-                    <div class="game-title">ВЛАД А4 - ПРЯТКИ</div>
-                    <div class="game-desc">Крутое видео, чтобы поднять настроение!</div>
-                    <button class="btn-play fun" onclick="openExternal('fun')">СМОТРЕТЬ ВИДЕО</button>
+                <!-- Карточка 6: СЕКРЕТНОЕ ВИДЕО (ВЛАД А4 - СУПЕРСПОСОБНОСТИ) -->
+                <div class="game-card secret-card">
+                    <span class="game-badge badge-secret">🔮 СЕКРЕТ 🔮</span>
+                    <div class="game-icon">🤫</div>
+                    <div class="game-title">ВЛАД А4 - СУПЕРСПОСОБНОСТИ</div>
+                    <div class="game-desc">Секретное видео! Получили СУПЕРСПОСОБНОСТИ на 24 Часа!</div>
+                    <button class="btn-play secret" onclick="openExternal('secret')">🔓 ОТКРЫТЬ СЕКРЕТ</button>
                 </div>
                 
-                <!-- Карточка 7: СЕКРЕТНОЕ ВИДЕО (новое) -->
-                <div class="game-card secret-card">
-                    <span class="game-badge badge-secret">🔮 СЕКРЕТНО 🔮</span>
-                    <div class="game-icon">🤫</div>
-                    <div class="game-title">НУБ И ПРО ПРОТИВ ПАУКА</div>
-                    <div class="game-desc">Секретное видео! НУБ И ПРО ПРОТИВ БОЛЬШОЙ ПАУК МУТАНТ В МАЙНКРАФТ!</div>
-                    <button class="btn-play secret" onclick="openExternal('secret')">🔓 ОТКРЫТЬ СЕКРЕТ</button>
+                <!-- Карточка 7: ВЛАД А4 - ПРЯТКИ -->
+                <div class="game-card">
+                    <span class="game-badge badge-vlad">ВЛАД А4</span>
+                    <div class="game-icon">🎥</div>
+                    <div class="game-title">ВЛАД А4 - ПРЯТКИ в ПРЕДМЕТАХ</div>
+                    <div class="game-desc">ВЛАД А4 - ПРЯТКИ в ПРЕДМЕТАХ Челлендж !</div>
+                    <button class="btn-play vlad" onclick="openExternal('vlad')">СМОТРЕТЬ ВИДЕО</button>
                 </div>
             </div>
         </div>
@@ -449,10 +452,10 @@
                 case 'lk':
                     window.open('https://hidenf901.github.io/d9012/', '_blank');
                     break;
-                case 'fun':
+                case 'secret':
                     window.open('https://rutube.ru/video/e21298e6d1e5b80c1067209b9ffbf69c/', '_blank');
                     break;
-                case 'secret':
+                case 'vlad':
                     window.open('https://rutube.ru/video/940404e193b2a6fa8b5b59091749a04f/', '_blank');
                     break;
             }
